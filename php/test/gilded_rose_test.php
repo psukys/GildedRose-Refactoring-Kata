@@ -2,7 +2,7 @@
 
 require_once 'gilded_rose.php';
 
-class GildedRoseTest extends PHPUnit_Framework_TestCase {
+class GildedRoseTest extends PHPUnit\Framework\TestCase  {
 
     function testFoo() {
         $items = array(new Item("foo", 0, 0));
