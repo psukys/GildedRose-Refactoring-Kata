@@ -36,6 +36,22 @@ class GildedRose {
         }
     }
 
+    /**
+     * Check item's quality and adjusts it if it goes out of defined range.
+     * @param Item $item item that will be checked
+     * @param int $min minimum value in range
+     * @param int $max maximum value in range
+     */
+    function fix_quality_by_range($item, $min, $max) {
+        if ($item->quality > $max) {
+            $item->quality = $max;
+        }
+
+        if ($item->quality < $min) {
+            $item->quality = $min;
+        }
+    }
+
     function update_quality() {
         foreach ($this->items as $item) {
             if ($item->name == 'Sulfuras, Hand of Ragnaros') { // special case - no changes
@@ -54,14 +70,7 @@ class GildedRose {
             }
 
             $item->sell_in -= 1;
-
-            if ($item->quality > 50) {
-                $item->quality = 50;
-            }
-
-            if ($item->quality < 0) {
-                $item->quality = 0;
-            }
+            $this->fix_quality_by_range($item, 0, 50);
         }
     }
 }
