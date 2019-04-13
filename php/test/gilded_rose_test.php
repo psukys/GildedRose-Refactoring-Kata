@@ -4,13 +4,29 @@ require_once 'gilded_rose.php';
 
 class GildedRoseTest extends PHPUnit\Framework\TestCase  {
 
+    private $foo;
+    private $brie;
+    private $concert;
+    private $sulfuras;
+
+    function setUp() {
+        $this->foo = new Item('foo', 10, 10);
+        $this->brie = new item('Aged Brie', 10, 10);
+        $this->concert = new Item('Backstage passes to a TAFKAL80ETC concert', 10, 10);
+        $this->sulfuras = new Item('Sulfuras, Hand of Ragnaros', 10, 80);
+    }
+
     /**
      * Tests that SellIn degrades after each update
      * Given: a casual item with mid values
      * Expect: SellIn to be decreased by 1
      */
     function testSellInDegrade() {
-        $this->fail();
+        $sellin = 10;
+        $this->foo->sell_in = $sellin;
+        $target = new GildedRose([$this->foo]);
+        $target->update_quality();
+        $this->assertEquals($sellin - 1, $this->foo->sell_in);
     }
 
     /**
@@ -19,7 +35,11 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: Quality to be decreased by 1
      */
     function testQualityDegrade() {
-        $this->fail();
+        $quality = 10;
+        $this->foo->quality = $quality;
+        $target = new GildedRose([$this->foo]);
+        $target->update_quality();
+        $this->assertEquals($quality - 1, $this->foo->quality);
     }
 
     /**
@@ -28,7 +48,11 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: Quality to be increased by 1
      */
     function testBrieQualityIncrease() {
-        $this->fail();
+        $quality = 10;
+        $this->brie->quality = $quality;
+        $target = new GildedRose([$this->brie]);
+        $target->update_quality();
+        $this->assertEquals($quality + 1, $this->brie->quality);
     }
 
     /**
@@ -37,7 +61,9 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: Quality persists to be 80 after updates
      */
     function testSulfurasQualityPersistance() {
-        $this->fail();
+        $target = new GildedRose([$this->sulfuras]);
+        $target->update_quality();
+        $this->assertEquals(80, $this->sulfuras->quality);
     }
 
     /**
@@ -46,7 +72,11 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality stays 50
      */
     function testQualityMaxWithBrie() {
-        $this->fail();
+        $quality = 50;
+        $this->brie->quality = $quality;
+        $target = new GildedRose([$this->brie]);
+        $target->update_quality();
+        $this->assertEquals(50, $this->brie->quality);
     }
 
     /**
@@ -55,17 +85,27 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality stays 50
      */
     function testQualityMaxWithConcert() {
-        $this->fail();
+        $quality = 50;
+        $this->concert->quality = $quality;
+        $target = new GildedRose([$this->concert]);
+        $target->update_quality();
+        $this->assertEquals(50, $this->concert->quality);
     }
 
     /**
      * Tests that quality for a concert with less than 50 for concert pass stops at 50,
      * when update step is higher
-     * Given: Concert tickets with 49 quality
+     * Given: Concert tickets with 49 quality, sellin <= 10
      * Expect: After update, quality tops to 50
      */
     function testQualityMaxWithConcertOverflow() {
-        $this->fail();
+        $quality = 49;
+        $sellin = 10;
+        $this->concert->quality = $quality;
+        $this->concert->sell_in = $sellin;
+        $target = new GildedRose([$this->concert]);
+        $target->update_quality();
+        $this->assertEquals(50, $this->concert->quality);
     }
 
     /**
@@ -74,7 +114,11 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality stays 0
      */
     function testQualityMin() {
-        $this->fail();
+        $quality = 0;
+        $this->foo->quality = $quality;
+        $target = new GildedRose([$this->foo]);
+        $target->update_quality();
+        $this->assertEquals(0, $this->foo->quality);
     }
 
     /**
@@ -83,7 +127,13 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality stays 0
      */
     function testQualityMinExpired() {
-        $this->fail();
+        $sellin = 0;
+        $quality = 0;
+        $this->foo->sell_in = $sellin;
+        $this->foo->quality = $quality;
+        $target = new GildedRose([$this->foo]);
+        $target->update_quality();
+        $this->assertEquals(0, $this->foo->quality);
     }
 
     /**
@@ -92,7 +142,13 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality is 0
      */
     function testQualityMinExpiredUnderflow() {
-        $this->fail();
+        $sellin = 0;
+        $quality = 1;
+        $this->foo->sell_in = $sellin;
+        $this->foo->quality = $quality;
+        $target = new GildedRose([$this->foo]);
+        $target->update_quality();
+        $this->assertEquals(0, $this->foo->quality);
     }
 
     /**
@@ -101,7 +157,13 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality increases by 1
      */
     function testConcertNormalUpdate() {
-        $this->fail();
+        $sellin = 50;
+        $quality = 10;
+        $this->concert->sell_in = $sellin;
+        $this->concert->quality = $quality;
+        $target = new GildedRose([$this->concert]);
+        $target->update_quality();
+        $this->assertEquals($quality + 1, $this->concert->quality);
     }
 
     /**
@@ -110,7 +172,13 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality increases by 2
      */
     function testConcert10dayUpdate() {
-        $this->fail();
+        $sellin = 10;
+        $quality = 10;
+        $this->concert->sell_in = $sellin;
+        $this->concert->quality = $quality;
+        $target = new GildedRose([$this->concert]);
+        $target->update_quality();
+        $this->assertEquals($quality + 2, $this->concert->quality);
     }
 
     /**
@@ -119,7 +187,13 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality increases by 3
      */
     function testConcert5dayUpdate() {
-        $this->fail();
+        $sellin = 5;
+        $quality = 10;
+        $this->concert->sell_in = $sellin;
+        $this->concert->quality = $quality;
+        $target = new GildedRose([$this->concert]);
+        $target->update_quality();
+        $this->assertEquals($quality + 3, $this->concert->quality);
     }
 
     /**
@@ -128,6 +202,12 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
      * Expect: After update, quality is 0
      */
     function testConcert0dayUpdate() {
-        $this->fail();
+        $sellin = 0;
+        $quality = 10;
+        $this->concert->sell_in = $sellin;
+        $this->concert->quality = $quality;
+        $target = new GildedRose([$this->concert]);
+        $target->update_quality();
+        $this->assertEquals(0, $this->concert->quality);
     }
 }
