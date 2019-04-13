@@ -37,14 +37,23 @@ class GildedRose {
     }
 
     /**
+     * Update conjured item's quality.
+     * @param Item $item conjured item
+     */
+    function update_conjured_quality($item) {
+        // from requirements: degrades twice as fast as normal item.
+        $this->update_normal_item_quality($item, 2);
+    }
+
+    /**
      * Update normal (without special features) item's quality.
      * @param Item $item item to be updated
      */
-    function update_normal_item_quality($item) {
+    function update_normal_item_quality($item, $degrade_scale) {
         if ($item->sell_in > 0) {
-            $item->quality -= 1;
+            $item->quality -= $degrade_scale;
         } else { // expired -2x
-            $item->quality -= 2;
+            $item->quality -= 2 * $degrade_scale;
         }
     }
 
@@ -77,8 +86,11 @@ class GildedRose {
                 case 'Backstage passes to a TAFKAL80ETC concert':
                     $this->update_concert_pass_quality($item);
                     break;
+                case 'Conjured':
+                    $this->update_conjured_quality($item);
+                    break;
                 default: // normal items
-                    $this->update_normal_item_quality($item);
+                    $this->update_normal_item_quality($item, 1);
             }
 
             $item->sell_in -= 1;
