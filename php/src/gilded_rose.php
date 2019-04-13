@@ -8,7 +8,11 @@ class GildedRose {
         $this->items = $items;
     }
 
-    function update_brie($item) {
+    /**
+     * Updates Aged Brie quality.
+     * @param Item $item Aged brie item
+     */
+    function update_brie_quality($item) {
         if ($item->sell_in > 0) {
             $item->quality += 1;
         } else {
@@ -16,7 +20,11 @@ class GildedRose {
         }
     }
 
-    function update_concert_pass($item) {
+    /**
+     * Update concert pass quality.
+     * @param Item $item concert pass item
+     */
+    function update_concert_pass_quality($item) {
         if ($item->sell_in <= 0) { // expired
             $item->quality = 0;
         } elseif ($item->sell_in <= 5) { // 3x 5 days before
@@ -28,10 +36,14 @@ class GildedRose {
         }
     }
 
-    function update_normal_item($item) {
+    /**
+     * Update normal (without special features) item's quality.
+     * @param Item $item item to be updated
+     */
+    function update_normal_item_quality($item) {
         if ($item->sell_in > 0) {
             $item->quality -= 1;
-        } else {
+        } else { // expired -2x
             $item->quality -= 2;
         }
     }
@@ -60,13 +72,13 @@ class GildedRose {
 
             switch ($item->name) {
                 case 'Aged Brie':
-                    $this->update_brie($item);
+                    $this->update_brie_quality($item);
                     break;
                 case 'Backstage passes to a TAFKAL80ETC concert':
-                    $this->update_concert_pass($item);
+                    $this->update_concert_pass_quality($item);
                     break;
                 default: // normal items
-                    $this->update_normal_item($item);
+                    $this->update_normal_item_quality($item);
             }
 
             $item->sell_in -= 1;
