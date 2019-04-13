@@ -16,9 +16,7 @@ class GildedRose {
 
             // normal item degrade
             if ($item->name != 'Aged Brie' and $item->name != 'Backstage passes to a TAFKAL80ETC concert') {
-                if ($item->quality > 0) {
-                    $item->quality = $item->quality - 1;
-                }
+                $item->quality = $item->quality - 1;
             // brie or concert upgrade
             } else {
                 $item->quality = $item->quality + 1; // brie would end here
@@ -30,9 +28,6 @@ class GildedRose {
                         $item->quality = $item->quality + 1;
                     }
                 }
-                if ($item->quality > 50) {
-                    $item->quality = 50;
-                }
             }
             
             // sellin degrade - can be negative!
@@ -43,14 +38,17 @@ class GildedRose {
                     $item->quality = 0; // after concert -> 0
                 }
                 if ($item->name != 'Aged Brie') {
-                    if ($item->quality > 0) {
-                        $item->quality = $item->quality - 1; // normal expired item -2 (-1 before)
-                    }
+                    $item->quality = $item->quality - 1; // normal expired item -2 (-1 before)
                 } else {
-                    if ($item->quality < 50) {
-                        $item->quality = $item->quality + 1; // undocumented -> expired upgrades twice
-                    }
+                    $item->quality = $item->quality + 1; // undocumented -> expired upgrades twice
                 }
+            }
+            if ($item->quality > 50) {
+                $item->quality = 50;
+            }
+
+            if ($item->quality < 0) {
+                $item->quality = 0;
             }
         }
     }
