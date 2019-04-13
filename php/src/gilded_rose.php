@@ -10,15 +10,17 @@ class GildedRose {
 
     function update_quality() {
         foreach ($this->items as $item) {
+            // normal item degrade
             if ($item->name != 'Aged Brie' and $item->name != 'Backstage passes to a TAFKAL80ETC concert') {
                 if ($item->quality > 0) {
                     if ($item->name != 'Sulfuras, Hand of Ragnaros') {
                         $item->quality = $item->quality - 1;
                     }
                 }
+            // brie or concert upgrade
             } else {
                 if ($item->quality < 50) {
-                    $item->quality = $item->quality + 1;
+                    $item->quality = $item->quality + 1; // brie would end here
                     if ($item->name == 'Backstage passes to a TAFKAL80ETC concert') {
                         if ($item->sell_in < 11) {
                             if ($item->quality < 50) {
@@ -34,6 +36,7 @@ class GildedRose {
                 }
             }
             
+            // sellin degrade - can be negative!
             if ($item->name != 'Sulfuras, Hand of Ragnaros') {
                 $item->sell_in = $item->sell_in - 1;
             }
@@ -43,15 +46,15 @@ class GildedRose {
                     if ($item->name != 'Backstage passes to a TAFKAL80ETC concert') {
                         if ($item->quality > 0) {
                             if ($item->name != 'Sulfuras, Hand of Ragnaros') {
-                                $item->quality = $item->quality - 1;
+                                $item->quality = $item->quality - 1; // normal expired item -2 (-1 before)
                             }
                         }
                     } else {
-                        $item->quality = $item->quality - $item->quality;
+                        $item->quality = $item->quality - $item->quality; // after concert -> 0
                     }
                 } else {
                     if ($item->quality < 50) {
-                        $item->quality = $item->quality + 1;
+                        $item->quality = $item->quality + 1; // undocumented -> expired upgrades twice
                     }
                 }
             }
