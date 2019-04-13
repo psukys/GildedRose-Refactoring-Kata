@@ -56,6 +56,21 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
     }
 
     /**
+     * Tests that quality of Brie increases by 2 when it's expired
+     * Given: Aged Brie with non max quality and 0 sellin
+     * Expect: After update - quality increases by 2
+     */
+    function testExpiredBrieDoubleQualityIncrease() {
+        $quality = 10;
+        $sellin = 0;
+        $this->brie->quality = $quality;
+        $this->brie->sell_in = $sellin;
+        $target = new GildedRose([$this->brie]);
+        $target->update_quality();
+        $this->assertEquals($quality + 2, $this->brie->quality);
+    }
+
+    /**
      * Tests that Sulfuras has persistant quality
      * Given: Sulfuras item
      * Expect: Quality persists to be 80 after updates
