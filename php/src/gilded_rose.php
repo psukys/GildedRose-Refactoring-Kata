@@ -23,10 +23,10 @@ class GildedRose {
             } else {
                 $item->quality = $item->quality + 1; // brie would end here
                 if ($item->name == 'Backstage passes to a TAFKAL80ETC concert') {
-                    if ($item->sell_in < 11) {
+                    if ($item->sell_in <= 10) {
                         $item->quality = $item->quality + 1;
                     }
-                    if ($item->sell_in < 6) {
+                    if ($item->sell_in <= 5) {
                         $item->quality = $item->quality + 1;
                     }
                 }
