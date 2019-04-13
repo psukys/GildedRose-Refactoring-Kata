@@ -86,7 +86,7 @@ class GildedRose {
                 case 'Backstage passes to a TAFKAL80ETC concert':
                     $this->update_concert_pass_quality($item);
                     break;
-                case 'Conjured':
+                case (preg_match('/Conjured/i', $item->name) ? true : false):
                     $this->update_conjured_quality($item);
                     break;
                 default: // normal items
