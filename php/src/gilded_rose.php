@@ -13,7 +13,7 @@ class GildedRose {
             if ($item->name == 'Sulfuras, Hand of Ragnaros') {
                 continue;
             }
-            
+
             // normal item degrade
             if ($item->name != 'Aged Brie' and $item->name != 'Backstage passes to a TAFKAL80ETC concert') {
                 if ($item->quality > 0) {
@@ -48,7 +48,7 @@ class GildedRose {
                             $item->quality = $item->quality - 1; // normal expired item -2 (-1 before)
                         }
                     } else {
-                        $item->quality = $item->quality - $item->quality; // after concert -> 0
+                        $item->quality = 0; // after concert -> 0
                     }
                 } else {
                     if ($item->quality < 50) {
