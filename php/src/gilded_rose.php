@@ -8,6 +8,34 @@ class GildedRose {
         $this->items = $items;
     }
 
+    function update_brie($item) {
+        if ($item->sell_in > 0) {
+            $item->quality += 1;
+        } else {
+            $item->quality += 2; // expired 2x
+        }
+    }
+
+    function update_concert_pass($item) {
+        if ($item->sell_in <= 0) { // expired
+            $item->quality = 0;
+        } elseif ($item->sell_in <= 5) { // 3x 5 days before
+            $item->quality += 3;
+        } elseif ($item->sell_in <= 10) { // 2x 10 days before
+            $item->quality += 2;
+        } else {
+            $item->quality += 1;
+        }
+    }
+
+    function update_normal_item($item) {
+        if ($item->sell_in > 0) {
+            $item->quality -= 1;
+        } else {
+            $item->quality -= 2;
+        }
+    }
+
     function update_quality() {
         foreach ($this->items as $item) {
             if ($item->name == 'Sulfuras, Hand of Ragnaros') { // special case - no changes
@@ -16,29 +44,13 @@ class GildedRose {
 
             switch ($item->name) {
                 case 'Aged Brie':
-                    if ($item->sell_in > 0) {
-                        $item->quality += 1;
-                    } else {
-                        $item->quality += 2; // expired 2x
-                    }
+                    $this->update_brie($item);
                     break;
                 case 'Backstage passes to a TAFKAL80ETC concert':
-                    if ($item->sell_in <= 0) { // expired
-                        $item->quality = 0;
-                    } elseif ($item->sell_in <= 5) { // 3x 5 days before
-                        $item->quality += 3;
-                    } elseif ($item->sell_in <= 10) { // 2x 10 days before
-                        $item->quality += 2;
-                    } else {
-                        $item->quality += 1;
-                    }
+                    $this->update_concert_pass($item);
                     break;
                 default: // normal items
-                    if ($item->sell_in > 0) {
-                        $item->quality -= 1;
-                    } else {
-                        $item->quality -= 2;
-                    }
+                    $this->update_normal_item($item);
             }
 
             $item->sell_in -= 1;
