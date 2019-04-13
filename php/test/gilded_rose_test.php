@@ -14,6 +14,7 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
         $this->brie = new item('Aged Brie', 10, 10);
         $this->concert = new Item('Backstage passes to a TAFKAL80ETC concert', 10, 10);
         $this->sulfuras = new Item('Sulfuras, Hand of Ragnaros', 10, 80);
+        $this->conjured = new Item('Conjured', 10, 10);
     }
 
     /**
@@ -224,5 +225,33 @@ class GildedRoseTest extends PHPUnit\Framework\TestCase  {
         $target = new GildedRose([$this->concert]);
         $target->update_quality();
         $this->assertEquals(0, $this->concert->quality);
+    }
+
+    /**
+     * Tests that conjured item degrades twice as much than normal item (-2)
+     * Given: Conjured item
+     * Expect: After update, quality decreased by 2
+     */
+    function testConjuredItemDegrade() {
+        $quality = 10;
+        $this->conjured->quality = $quality;
+        $target = new GildedRose([$this->conjured]);
+        $target->update_quality();
+        $this->assertEquals($quality - 2, $this->conjured->quality);
+    }
+
+    /**
+     * Tests that expired conjured item degrades twice as much than normal item (-4)
+     * Given: Expired conjured item
+     * Expect: After update, quality decreased by 4
+     */
+    function testExpiredConjuredItemDegrade() {
+        $sellin = 0;
+        $quality = 10;
+        $this->conjured->sell_in = $sellin;
+        $this->conjured->quality = $quality;
+        $target = new GildedRose([$this->conjured]);
+        $target->update_quality();
+        $this->assertEquals($quality - 4, $this->conjured->quality);
     }
 }
